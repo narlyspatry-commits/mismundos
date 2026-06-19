@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteraBot Pro</title>
+<style>
+:root{
+  --bg:#f7f3f8;
+  --ink:#332b3a;
+  --muted:#756c7d;
+  --card:rgba(255,255,255,.86);
+  --line:rgba(78,56,91,.13);
+  --shadow:0 18px 45px rgba(76,50,91,.16);
+  --accent:#a95f9b;
+  --accent2:#e7bd70;
+  --good:#3ca57a;
+  --bad:#d96878;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:
+radial-gradient(circle at 10% 10%,#fff3fb 0,transparent 28%),
+radial-gradient(circle at 88% 18%,#eef8ff 0,transparent 30%),
+linear-gradient(135deg,#faf7fb,#f1eef7 55%,#f7f4ee);}
+body{overflow-x:hidden}
+button{font:inherit}
+.hidden{display:none!important}
+.screen{min-height:100vh;padding:28px 22px 42px;position:relative;z-index:2}
+.floating-bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.float-icon{position:absolute;font-size:clamp(24px,3vw,48px);opacity:.12;animation:float 11s ease-in-out infinite}
+.float-icon:nth-child(1){left:4%;top:10%}
+.float-icon:nth-child(2){left:86%;top:12%;animation-delay:-3s}
+.float-icon:nth-child(3){left:10%;top:70%;animation-delay:-5s}
+.float-icon:nth-child(4){left:78%;top:74%;animation-delay:-8s}
+.float-icon:nth-child(5){left:48%;top:5%;animation-delay:-6s}
+.float-icon:nth-child(6){left:52%;top:82%;animation-delay:-2s}
+@keyframes float{50%{transform:translateY(-18px) rotate(6deg)}}
+.topbar{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900}
+.brand-mark{width:45px;height:45px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#fff,#eadff3);box-shadow:var(--shadow);font-size:25px}
+.icon-btn,.btn{border:0;cursor:pointer;border-radius:16px;padding:12px 18px;font-weight:800;transition:.2s transform,.2s box-shadow,.2s opacity}
+.icon-btn:hover,.btn:hover{transform:translateY(-2px)}
+.icon-btn{background:#fff;color:var(--ink);box-shadow:0 8px 22px rgba(64,44,76,.12)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 12px 28px color-mix(in srgb,var(--accent) 30%,transparent)}
+.btn-soft{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.hero{max-width:960px;margin:54px auto 32px;text-align:center}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;padding:8px 13px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#7b567a}
+.hero h1{font-family:Georgia,serif;font-size:clamp(50px,8vw,92px);line-height:.95;margin:20px 0 10px;background:linear-gradient(135deg,#5b365e,#bc6d9f,#c99c48);-webkit-background-clip:text;color:transparent}
+.hero h2{font-size:clamp(18px,2.5vw,27px);margin:0;color:#6b5872}
+.hero p{max-width:760px;margin:18px auto;color:var(--muted);font-size:17px;line-height:1.7}
+.world-grid{max-width:1180px;margin:34px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.world-card{position:relative;overflow:hidden;background:var(--card);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.8);border-radius:26px;padding:24px;min-height:220px;box-shadow:var(--shadow);cursor:pointer;transition:.25s transform,.25s box-shadow}
+.world-card:hover{transform:translateY(-7px);box-shadow:0 24px 58px rgba(76,50,91,.21)}
+.world-card:before{content:"";position:absolute;inset:auto -35px -55px auto;width:150px;height:150px;border-radius:50%;background:var(--w2);opacity:.23}
+.world-icon{width:62px;height:62px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(135deg,var(--w1),var(--w2));font-size:33px;box-shadow:0 12px 26px color-mix(in srgb,var(--w1) 28%,transparent)}
+.world-card h3{font-family:Georgia,serif;font-size:24px;margin:18px 0 8px}
+.world-card p{margin:0;color:var(--muted);line-height:1.55}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:18px;font-size:13px;font-weight:900;color:var(--w1)}
+.lesson-wrap,.game-wrap{max-width:1080px;margin:38px auto 0}
+.lesson-hero{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.9);border-radius:30px;padding:28px;box-shadow:var(--shadow)}
+.lesson-big-icon{width:92px;height:92px;border-radius:28px;display:grid;place-items:center;font-size:48px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.lesson-hero h1{margin:0;font-family:Georgia,serif;font-size:clamp(32px,5vw,56px)}
+.lesson-hero p{margin:8px 0 0;color:var(--muted);line-height:1.6}
+.didactic-key{margin-top:18px;padding:19px 22px;border-radius:22px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 10%,#fff),color-mix(in srgb,var(--accent2) 12%,#fff));border-left:6px solid var(--accent);box-shadow:0 10px 25px rgba(60,44,70,.08)}
+.didactic-key strong{display:block;margin-bottom:5px}
+.concept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:18px 0}
+.concept-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 24px rgba(65,48,74,.08)}
+.concept-card b{display:block;color:var(--accent);margin-bottom:7px}
+.lesson-actions{display:flex;justify-content:center;gap:12px;margin-top:24px;flex-wrap:wrap}
+.hud{display:grid;grid-template-columns:1.5fr repeat(3,auto);gap:12px;align-items:center;background:rgba(255,255,255,.91);border-radius:22px;padding:15px 17px;box-shadow:var(--shadow);position:sticky;top:10px;z-index:10}
+.progress-track,.time-track{height:12px;background:#ece7ef;border-radius:999px;overflow:hidden}
+.progress-fill,.time-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:inherit;transition:width .35s}
+.stat{background:#f8f5fa;border:1px solid var(--line);padding:10px 13px;border-radius:15px;font-weight:900;white-space:nowrap}
+.time-row{margin-top:13px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;color:var(--muted);font-weight:800}
+.game-card{margin-top:18px;background:rgba(255,255,255,.93);border-radius:30px;padding:28px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.94)}
+.level-kicker{color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:.08em;font-size:13px}
+.game-card h1{font-family:Georgia,serif;font-size:clamp(30px,5vw,48px);margin:8px 0 16px}
+.mission{padding:14px 17px;border-radius:17px;background:#f5f0f7;border-left:5px solid var(--accent);font-weight:800}
+.text-base{margin:18px 0;padding:22px;border-radius:22px;background:linear-gradient(135deg,#fff,#f8f4fa);border:1px solid var(--line);font-family:Georgia,serif;font-size:19px;line-height:1.65}
+.hint{display:flex;gap:10px;align-items:flex-start;padding:13px 15px;background:#fff9e9;border:1px solid #f1d99b;border-radius:16px;color:#6d5930}
+.question{font-size:22px;font-weight:900;margin:22px 0 14px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option{border:2px solid #ece5ef;background:#fff;border-radius:18px;padding:16px;text-align:left;cursor:pointer;font-weight:800;color:var(--ink);transition:.2s}
+.option:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 20px rgba(75,51,88,.09)}
+.option.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,#fff)}
+.option.correct{border-color:var(--good);background:#eefaf5}
+.option.wrong{border-color:var(--bad);background:#fff0f2}
+.maze-panel{margin:18px 0;background:linear-gradient(135deg,#fdf7fb,#fffaf0);border:1px solid var(--line);border-radius:24px;padding:18px}
+.maze-info{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.maze-board{display:grid;grid-template-columns:repeat(9,38px);grid-template-rows:repeat(9,38px);gap:3px;justify-content:center;outline:none}
+.cell{width:38px;height:38px;border-radius:8px;background:#f2e8ef;display:grid;place-items:center;font-size:18px}
+.wall{background:#8e5c84;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.path{background:#fff8e8}
+.checkpoint{background:#f6d98d}
+.exit{background:#72c9a0}
+.player{background:#bb6ca2!important;box-shadow:0 0 0 4px rgba(187,108,162,.2);color:#fff}
+.maze-concept{margin-top:12px;min-height:58px;padding:13px;border-radius:15px;background:#fff;border:1px dashed #cda76a;color:#614b2f}
+.modal{position:fixed;inset:0;background:rgba(45,35,51,.45);backdrop-filter:blur(8px);z-index:50;display:grid;place-items:center;padding:20px}
+.modal-card{width:min(560px,100%);background:#fff;border-radius:28px;padding:28px;box-shadow:0 25px 80px rgba(42,30,48,.3);text-align:center;animation:pop .25s ease}
+@keyframes pop{from{transform:scale(.86);opacity:0}}
+.feedback-icon{font-size:60px}
+.modal-card h2{font-family:Georgia,serif;font-size:36px;margin:8px 0}
+.modal-card p{color:var(--muted);line-height:1.6}
+.remember{padding:14px;border-radius:16px;background:#f5f0f7;margin:14px 0;text-align:left}
+.confetti{position:fixed;width:10px;height:16px;top:-20px;z-index:80;animation:fall 1.9s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(760deg);opacity:.2}}
+.finish{text-align:center;padding:40px 20px}
+.finish .trophy{font-size:90px}
+.footer-note{text-align:center;color:var(--muted);font-size:13px;margin-top:34px}
+@media(max-width:900px){.world-grid{grid-template-columns:repeat(2,1fr)}.concept-grid{grid-template-columns:1fr 1fr}.hud{grid-template-columns:1fr 1fr}.hud .progress-box{grid-column:1/-1}.options{grid-template-columns:1fr}}
+@media(max-width:580px){.screen{padding:18px 12px 30px}.world-grid{grid-template-columns:1fr}.concept-grid{grid-template-columns:1fr}.lesson-hero{grid-template-columns:1fr;text-align:center}.lesson-big-icon{margin:auto}.hud{position:static}.maze-board{grid-template-columns:repeat(9,29px);grid-template-rows:repeat(9,29px);gap:2px}.cell{width:29px;height:29px;border-radius:6px;font-size:14px}.game-card{padding:18px}.topbar{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="floating-bg" aria-hidden="true">
+  <div class="float-icon">📚</div><div class="float-icon">📜</div><div class="float-icon">✨</div>
+  <div class="float-icon">🪶</div><div class="float-icon">🎭</div><div class="float-icon">🔎</div>
+</div>
+
+<section id="home" class="screen">
+  <div class="topbar">
+    <div class="brand"><div class="brand-mark">🤖</div>LiteraBot Pro</div>
+    <button class="icon-btn sound-toggle" aria-label="Activar o desactivar sonido">🔊 Sonido</button>
+  </div>
+  <div class="hero">
+    <span class="eyebrow">✦ Laboratorio literario interactivo</span>
+    <h1>LiteraBot Pro</h1>
+    <h2>Prototipos educativos: del código al aula</h2>
+    <p>Explora géneros, estructura narrativa, secuencias, comprensión lectora, personajes y figuras literarias a través de seis mundos gamificados.</p>
+  </div>
+  <div id="worldGrid" class="world-grid"></div>
+  <div class="footer-note">Selecciona un mundo, aprende sus claves y supera cinco niveles.</div>
+</section>
+
+<section id="lesson" class="screen hidden">
+  <div class="topbar">
+    <button class="icon-btn" onclick="showHome()">← Inicio</button>
+    <button class="icon-btn sound-toggle">🔊 Sonido</button>
+  </div>
+  <div class="lesson-wrap">
+    <div class="lesson-hero">
+      <div id="lessonIcon" class="lesson-big-icon"></div>
+      <div>
+        <div class="level-kicker">Mini lección</div>
+        <h1 id="lessonTitle"></h1>
+        <p id="lessonText"></p>
+      </div>
+    </div>
+    <div id="lessonKey" class="didactic-key"></div>
+    <div id="conceptGrid" class="concept-grid"></div>
+    <div class="lesson-actions">
+      <button class="btn btn-soft" onclick="showHome()">Ver otros mundos</button>
+      <button class="btn btn-primary" onclick="startWorld()">Comenzar aventura ✨</button>
+    </div>
+  </div>
+</section>
+
+<section id="game" class="screen hidden">
+  <div class="topbar">
+    <button class="icon-btn" onclick="showHome()">← Inicio</button>
+    <button class="icon-btn sound-toggle">🔊 Sonido</button>
+  </div>
+  <div class="game-wrap">
+    <div class="hud">
+      <div class="progress-box">
+        <div style="display:flex;justify-content:space-between;font-weight:900;margin-bottom:7px"><span>Progreso</span><span id="levelLabel">1/5</span></div>
+        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+      </div>
+      <div class="stat">⭐ <span id="score">0</span></div>
+      <div class="stat">❤️ <span id="lives">3</span></div>
+      <div class="stat">🏛️ <span id="worldShort">Mundo</span></div>
+    </div>
+    <div class="time-row"><span>⏳ Tiempo</span><div class="time-track"><div id="timeFill" class="time-fill"></div></div><span id="timeText">25 s</span></div>
+    <div id="gameCard" class="game-card"></div>
+  </div>
+</section>
+
+<div id="feedbackModal" class="modal hidden">
+  <div class="modal-card">
+    <div id="feedbackIcon" class="feedback-icon"></div>
+    <h2 id="feedbackTitle"></h2>
+    <p id="feedbackText"></p>
+    <div id="rememberBox" class="remember"></div>
+    <button id="feedbackBtn" class="btn btn-primary"></button>
+  </div>
+</div>
+
+<script>
+const worlds = [
+{
+ id:0,title:"Laberinto literario",short:"Laberinto",icon:"🧭",colors:["#9d416f","#d4a84f"],
+ theme:"Géneros literarios, recursos literarios y comprensión general",
+ lesson:"En este mundo reconocerás cómo se organizan los textos literarios y qué recursos usan para expresar emociones, narrar hechos o representar acciones.",
+ key:"Clave didáctica: observa la intención del texto. ¿Cuenta una historia, expresa sentimientos o presenta acciones para ser representadas?",
+ concepts:[
+  ["Narrativo","Cuenta hechos mediante narrador, personajes, tiempo y espacio."],
+  ["Lírico","Expresa sentimientos, emociones e imágenes poéticas."],
+  ["Dramático","Presenta diálogos y acciones pensadas para la representación."],
+  ["Recurso literario","Embellece o intensifica el lenguaje."],
+  ["Comprensión general","Identifica tema, intención e información principal."]
+ ],
+ levels:[
+ {mission:"Recorre el laberinto, descubre conceptos y encuentra la única salida.",fragment:"Usa las teclas de dirección. Cada punto dorado revela una clave literaria.",hint:"La salida es verde. Los puntos dorados guardan conceptos.",question:"Después de explorar, ¿qué género está pensado principalmente para ser representado?",options:["Narrativo","Lírico","Dramático","Informativo"],correct:2,explanation:"El género dramático se construye con diálogos y acciones para la escena.",remember:"Recuerda: dramático = representación, personajes y diálogo.",goal:"Distinguir el género dramático.",maze:true},
+ {mission:"Identifica el género del fragmento.",fragment:"La luna se asomó sobre el bosque mientras Ana corría para encontrar a su perro perdido.",hint:"Busca narrador, personaje y acción.",question:"¿A qué género pertenece principalmente?",options:["Lírico","Narrativo","Dramático","Argumentativo"],correct:1,explanation:"Hay narrador, personaje y una acción que avanza en el tiempo.",remember:"El género narrativo cuenta sucesos.",goal:"Reconocer rasgos del género narrativo."},
+ {mission:"Reconoce la intención de un texto lírico.",fragment:"Mi corazón es una ventana abierta al amanecer.",hint:"Observa la emoción y el lenguaje imaginativo.",question:"¿Qué género predomina?",options:["Dramático","Narrativo","Lírico","Científico"],correct:2,explanation:"El fragmento expresa una emoción mediante una imagen poética.",remember:"La lírica expresa sentimientos y sensaciones.",goal:"Identificar textos líricos."},
+ {mission:"Diferencia un recurso literario.",fragment:"El viento susurraba secretos entre los árboles.",hint:"Algo de la naturaleza realiza una acción humana.",question:"¿Qué recurso aparece?",options:["Personificación","Resumen","Descripción objetiva","Diálogo"],correct:0,explanation:"Se atribuye al viento la acción humana de susurrar secretos.",remember:"Personificar es dar cualidades humanas a seres u objetos.",goal:"Reconocer personificación."},
+ {mission:"Comprende la idea general.",fragment:"Un grupo de niños creó una biblioteca viajera para compartir libros con todo el barrio.",hint:"Pregunta: ¿de qué trata principalmente?",question:"¿Cuál es la idea principal?",options:["Los niños perdieron libros","La biblioteca cerró","Los niños promovieron la lectura en su barrio","El barrio no tenía niños"],correct:2,explanation:"La acción central es crear una biblioteca viajera para compartir lectura.",remember:"La idea principal resume lo más importante.",goal:"Identificar la idea principal."}
+]
+},
+{
+ id:1,title:"CuentoLAB",short:"CuentoLAB",icon:"📜",colors:["#b68b43","#e8d1a2"],
+ theme:"Inicio, nudo y desenlace",
+ lesson:"Todo cuento organiza sus acontecimientos. El inicio presenta; el nudo desarrolla el conflicto; el desenlace muestra cómo termina o se resuelve.",
+ key:"Clave didáctica: piensa qué función cumple cada parte dentro de la historia.",
+ concepts:[["Inicio","Presenta personajes, lugar y situación inicial."],["Nudo","Aparece el problema o conflicto principal."],["Desenlace","El conflicto se resuelve y la historia termina."],["Conflicto","Situación que altera la tranquilidad inicial."],["Coherencia","Las partes se conectan de manera lógica."]],
+ levels:[
+ {mission:"Ubica la parte del cuento.",fragment:"Había una vez una niña llamada Elisa que vivía junto al mar.",hint:"Se presenta personaje y lugar.",question:"¿Qué parte es?",options:["Inicio","Nudo","Desenlace","Moraleja"],correct:0,explanation:"Presenta a Elisa y el lugar donde vive.",remember:"El inicio responde quién, dónde y cómo comienza.",goal:"Reconocer el inicio."},
+ {mission:"Detecta el conflicto.",fragment:"Una mañana, Elisa descubrió que todas las barcas habían desaparecido.",hint:"La tranquilidad cambia por un problema.",question:"¿Qué parte representa?",options:["Título","Inicio","Nudo","Desenlace"],correct:2,explanation:"La desaparición de las barcas introduce el problema.",remember:"En el nudo aparece o se desarrolla el conflicto.",goal:"Identificar el nudo."},
+ {mission:"Reconoce la solución.",fragment:"Finalmente, las barcas regresaron guiadas por la luz del faro que Elisa había encendido.",hint:"Observa cómo termina el problema.",question:"¿Qué parte es?",options:["Inicio","Nudo","Descripción","Desenlace"],correct:3,explanation:"La situación se resuelve y la historia llega a su cierre.",remember:"El desenlace muestra la solución o final.",goal:"Identificar el desenlace."},
+ {mission:"Ordena mentalmente la historia.",fragment:"1. El conejo encontró una semilla. 2. La sembró y la cuidó. 3. Creció una gran flor.",hint:"Busca presentación, desarrollo y resultado.",question:"¿Cuál hecho funciona como desenlace?",options:["Encontró una semilla","La sembró","La cuidó","Creció una gran flor"],correct:3,explanation:"La flor es el resultado final de las acciones anteriores.",remember:"El desenlace suele mostrar el resultado.",goal:"Relacionar acciones con el desenlace."},
+ {mission:"Comprende la función del nudo.",fragment:"Tomás quería participar en la carrera, pero su bicicleta tenía una rueda dañada.",hint:"Hay un deseo y un obstáculo.",question:"¿Por qué este fragmento pertenece al nudo?",options:["Porque presenta un problema","Porque termina la historia","Porque da una definición","Porque solo describe un lugar"],correct:0,explanation:"La rueda dañada impide alcanzar el objetivo y crea el conflicto.",remember:"Un conflicto enfrenta al personaje con un obstáculo.",goal:"Explicar la función del nudo."}
+]
+},
+{
+ id:2,title:"RutaNarrativa",short:"Ruta",icon:"🛤️",colors:["#c879a9","#8c6ac2"],
+ theme:"Secuencias de hechos y orden narrativo",
+ lesson:"Una narración avanza mediante acciones relacionadas. Los conectores temporales ayudan a ordenar lo que ocurre antes, durante y después.",
+ key:"Clave didáctica: busca pistas temporales y relaciones de causa y consecuencia.",
+ concepts:[["Antes","Acción que ocurre primero."],["Después","Acción posterior."],["Finalmente","Último hecho o cierre."],["Conectores","Palabras que organizan el tiempo."],["Causa y efecto","Una acción produce una consecuencia."]],
+ levels:[
+ {mission:"Identifica el primer hecho.",fragment:"Primero, Sara preparó su mochila. Luego salió de casa. Finalmente llegó a la escuela.",hint:"El conector indica el comienzo.",question:"¿Qué ocurrió primero?",options:["Llegó a la escuela","Salió de casa","Preparó su mochila","Regresó a casa"],correct:2,explanation:"“Primero” señala la acción inicial.",remember:"Los conectores temporales ordenan acciones.",goal:"Identificar el primer hecho."},
+ {mission:"Reconoce la secuencia lógica.",fragment:"A. Horneó el pastel. B. Mezcló los ingredientes. C. Sirvió el pastel.",hint:"Para hornear, antes hay que mezclar.",question:"¿Cuál es el orden correcto?",options:["A-B-C","B-A-C","C-A-B","B-C-A"],correct:1,explanation:"Primero mezcla, luego hornea y al final sirve.",remember:"Una secuencia lógica respeta el proceso real.",goal:"Ordenar acciones."},
+ {mission:"Interpreta un conector.",fragment:"Lucía terminó la tarea; después, guardó sus cuadernos.",hint:"La palabra destacada marca posterioridad.",question:"¿Qué indica “después”?",options:["Una causa","Una acción posterior","Una comparación","Una duda"],correct:1,explanation:"Indica que guardar ocurrió luego de terminar.",remember:"Después = acción posterior.",goal:"Comprender conectores temporales."},
+ {mission:"Relaciona causa y efecto.",fragment:"Llovió durante toda la noche, por eso el río aumentó su nivel.",hint:"Una situación provoca otra.",question:"¿Cuál es la causa?",options:["El río aumentó","Llovió toda la noche","Salió el sol","El río se secó"],correct:1,explanation:"La lluvia intensa provocó el aumento del río.",remember:"La causa explica por qué ocurre algo.",goal:"Diferenciar causa y efecto."},
+ {mission:"Completa una ruta narrativa.",fragment:"Nora encontró un mapa. Luego siguió sus señales. ________, descubrió un cofre.",hint:"Se necesita un conector de cierre.",question:"¿Qué palabra completa mejor?",options:["Aunque","Finalmente","Porque","Mientras"],correct:1,explanation:"“Finalmente” introduce el último hecho.",remember:"Finalmente anuncia el cierre de una secuencia.",goal:"Usar conectores de orden."}
+]
+},
+{
+ id:3,title:"Detective Lector",short:"Detective",icon:"🔎",colors:["#438fbe","#52c7c1"],
+ theme:"Comprensión lectora, inferencias, pistas y preguntas clave",
+ lesson:"Comprender no es solo repetir palabras. También implica relacionar pistas, anticipar ideas e inferir información que el texto sugiere.",
+ key:"Clave didáctica: una buena inferencia combina lo que dice el texto con lo que ya sabes.",
+ concepts:[["Pista textual","Dato que ayuda a comprender."],["Inferencia","Conclusión basada en pistas."],["Idea principal","Mensaje central."],["Pregunta clave","Orienta la búsqueda de información."],["Evidencia","Parte del texto que justifica una respuesta."]],
+ levels:[
+ {mission:"Usa pistas para inferir.",fragment:"Camila entró con el cabello mojado y cerró rápidamente su paraguas.",hint:"Relaciona cabello mojado y paraguas.",question:"¿Qué probablemente ocurría afuera?",options:["Nevaba","Llovía","Hacía mucho sol","Había viento seco"],correct:1,explanation:"El cabello mojado y el paraguas son pistas de lluvia.",remember:"Inferir es concluir a partir de pistas.",goal:"Realizar una inferencia."},
+ {mission:"Encuentra evidencia.",fragment:"Pedro revisó tres veces su reloj y caminaba de un lado a otro frente a la puerta.",hint:"Sus acciones revelan un estado emocional.",question:"¿Cómo se sentía probablemente?",options:["Tranquilo","Ansioso","Dormido","Orgulloso"],correct:1,explanation:"Mirar repetidamente el reloj y caminar inquieto sugieren ansiedad.",remember:"Las acciones de un personaje son evidencias.",goal:"Inferir emociones."},
+ {mission:"Identifica la idea principal.",fragment:"Las abejas transportan polen de una flor a otra. Gracias a este proceso, muchas plantas pueden producir frutos y semillas.",hint:"Busca qué explica todo el fragmento.",question:"¿Cuál es la idea principal?",options:["Las abejas fabrican flores","La polinización ayuda a reproducir plantas","Todas las semillas son iguales","Las abejas viven solas"],correct:1,explanation:"El texto destaca la importancia de la polinización.",remember:"La idea principal reúne la información esencial.",goal:"Reconocer idea principal."},
+ {mission:"Formula la pregunta adecuada.",fragment:"El museo abrirá una exposición de dinosaurios el próximo sábado a las nueve de la mañana.",hint:"La respuesta debe estar explícita.",question:"¿Qué pregunta responde el texto?",options:["¿Por qué desaparecieron los dinosaurios?","¿Cuándo abre la exposición?","¿Quién descubrió el museo?","¿Cómo se hace un fósil?"],correct:1,explanation:"El texto informa el día y la hora de apertura.",remember:"Las preguntas clave buscan datos precisos.",goal:"Relacionar preguntas y respuestas."},
+ {mission:"Distingue hecho e inferencia.",fragment:"La puerta estaba abierta y había huellas de barro en el piso.",hint:"El texto no dice quién entró.",question:"¿Cuál opción es una inferencia razonable?",options:["La puerta estaba abierta","Había huellas de barro","Alguien entró con zapatos sucios","El piso era de madera"],correct:2,explanation:"Se deduce una entrada con zapatos sucios a partir de las huellas.",remember:"Una inferencia no aparece literal, pero se apoya en evidencias.",goal:"Diferenciar información explícita e inferida."}
+]
+},
+{
+ id:4,title:"Mapa de Personajes",short:"Personajes",icon:"🎭",colors:["#a57952","#d6b985"],
+ theme:"Protagonistas, antagonistas y secundarios",
+ lesson:"Los personajes cumplen funciones distintas. El protagonista impulsa la historia; el antagonista se opone; los secundarios acompañan o apoyan.",
+ key:"Clave didáctica: no clasifiques por ser “bueno” o “malo”; observa la función que cumple en el conflicto.",
+ concepts:[["Protagonista","Personaje central y eje de la acción."],["Antagonista","Se opone al objetivo del protagonista."],["Secundario","Acompaña, ayuda o complementa."],["Rasgos","Características físicas o psicológicas."],["Motivación","Razón que impulsa sus acciones."]],
+ levels:[
+ {mission:"Identifica al protagonista.",fragment:"Mara emprendió un viaje para recuperar la semilla dorada y salvar su aldea.",hint:"Es quien persigue el objetivo principal.",question:"¿Qué papel cumple Mara?",options:["Narradora externa","Protagonista","Antagonista","Personaje incidental"],correct:1,explanation:"Mara dirige la acción y busca resolver el conflicto.",remember:"El protagonista ocupa el centro de la historia.",goal:"Reconocer protagonista."},
+ {mission:"Identifica al antagonista.",fragment:"El guardián del bosque bloqueó todos los caminos para impedir que Mara llegara a la montaña.",hint:"Se opone al objetivo principal.",question:"¿Qué función cumple el guardián?",options:["Protagonista","Secundario aliado","Antagonista","Narrador"],correct:2,explanation:"Impide que Mara alcance su meta.",remember:"El antagonista crea oposición.",goal:"Reconocer antagonista."},
+ {mission:"Reconoce un personaje secundario.",fragment:"Leo entregó a Mara una brújula y le explicó cómo cruzar el valle.",hint:"Ayuda, pero no dirige toda la historia.",question:"¿Qué tipo de personaje es Leo?",options:["Secundario","Antagonista","Protagonista","Narrador omnisciente"],correct:0,explanation:"Apoya a la protagonista en su recorrido.",remember:"Los secundarios complementan la acción principal.",goal:"Clasificar personajes secundarios."},
+ {mission:"Analiza una motivación.",fragment:"Mara arriesgó su seguridad porque quería proteger a las familias de su aldea.",hint:"Busca la razón de su conducta.",question:"¿Cuál es su motivación?",options:["Encontrar fama","Proteger a su comunidad","Vencer por diversión","Abandonar la aldea"],correct:1,explanation:"Su deseo de proteger a la comunidad impulsa sus acciones.",remember:"La motivación explica por qué actúa un personaje.",goal:"Identificar motivaciones."},
+ {mission:"Diferencia función y personalidad.",fragment:"El antagonista era amable al hablar, pero escondía el mapa para retrasar a Mara.",hint:"Ser amable no cambia su oposición.",question:"¿Por qué sigue siendo antagonista?",options:["Porque habla poco","Porque se opone al objetivo de Mara","Porque usa un mapa","Porque aparece al final"],correct:1,explanation:"La función narrativa depende de su oposición, no de su manera de hablar.",remember:"Antagonista no significa necesariamente malvado.",goal:"Comprender la función narrativa."}
+]
+},
+{
+ id:5,title:"Explorador de Figuras Literarias",short:"Figuras",icon:"🪶",colors:["#817c78","#c2a77b"],
+ theme:"Metáfora, símil, hipérbole y personificación",
+ lesson:"Las figuras literarias transforman el lenguaje para hacerlo más expresivo. Comparan, exageran, sustituyen significados o dan vida humana a lo no humano.",
+ key:"Clave didáctica: observa si compara con “como”, exagera, identifica una cosa con otra o atribuye acciones humanas.",
+ concepts:[["Metáfora","Identifica una realidad con otra sin usar “como”."],["Símil","Compara usando palabras como “como” o “parece”."],["Hipérbole","Exagera intencionalmente."],["Personificación","Da cualidades humanas a seres u objetos."],["Imagen poética","Expresión que despierta sensaciones e imaginación."]],
+ levels:[
+ {mission:"Reconoce una metáfora.",fragment:"Tus ojos son dos luceros.",hint:"No aparece la palabra “como”.",question:"¿Qué figura literaria es?",options:["Símil","Metáfora","Hipérbole","Personificación"],correct:1,explanation:"Identifica los ojos con luceros de manera directa.",remember:"Metáfora: una cosa es otra en sentido figurado.",goal:"Reconocer metáforas."},
+ {mission:"Identifica un símil.",fragment:"La niña corría como una gacela.",hint:"Hay una comparación explícita.",question:"¿Qué figura aparece?",options:["Símil","Metáfora","Hipérbole","Personificación"],correct:0,explanation:"La palabra “como” introduce una comparación.",remember:"Símil = comparación explícita.",goal:"Reconocer símiles."},
+ {mission:"Detecta una hipérbole.",fragment:"Te he llamado un millón de veces.",hint:"La cantidad está exagerada.",question:"¿Qué figura es?",options:["Metáfora","Símil","Hipérbole","Personificación"],correct:2,explanation:"Se exagera la cantidad para intensificar el mensaje.",remember:"Hipérbole = exageración intencional.",goal:"Reconocer hipérboles."},
+ {mission:"Reconoce personificación.",fragment:"La ciudad despertó bostezando al amanecer.",hint:"La ciudad realiza acciones humanas.",question:"¿Qué figura aparece?",options:["Personificación","Símil","Hipérbole","Enumeración"],correct:0,explanation:"Se atribuyen a la ciudad las acciones humanas de despertar y bostezar.",remember:"Personificar es humanizar lo no humano.",goal:"Reconocer personificación."},
+ {mission:"Compara figuras literarias.",fragment:"Su voz era miel para mis oídos.",hint:"La voz se identifica directamente con la miel.",question:"¿Por qué es metáfora y no símil?",options:["Porque exagera una cantidad","Porque usa “como”","Porque identifica dos elementos sin conector comparativo","Porque un objeto habla"],correct:2,explanation:"La identificación es directa y no usa “como” ni otro nexo comparativo.",remember:"La metáfora establece una equivalencia implícita.",goal:"Diferenciar metáfora y símil."}
+]
+}
+];
+
+let currentWorld=0,currentLevel=0,score=0,lives=3,timeLeft=25,timer=null,soundOn=true,answered=false,audioCtx=null,mazeUnlocked=false;
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+
+function buildWorldCards(){
+ const grid=$("#worldGrid"); grid.innerHTML="";
+ worlds.forEach(w=>{
+  const card=document.createElement("article");
+  card.className="world-card";
+  card.style.setProperty("--w1",w.colors[0]);card.style.setProperty("--w2",w.colors[1]);
+  card.innerHTML=`<div class="world-icon">${w.icon}</div><h3>${w.title}</h3><p>${w.theme}</p><div class="card-footer"><span>5 niveles</span><span>Explorar →</span></div>`;
+  card.onclick=()=>openLesson(w.id);
+  grid.appendChild(card);
+ });
+}
+function setTheme(w){document.documentElement.style.setProperty("--accent",w.colors[0]);document.documentElement.style.setProperty("--accent2",w.colors[1]);}
+function showOnly(id){["home","lesson","game"].forEach(x=>$("#"+x).classList.toggle("hidden",x!==id));window.scrollTo({top:0,behavior:"smooth"});}
+function showHome(){clearInterval(timer);showOnly("home");setTheme(worlds[0]);}
+function openLesson(id){
+ currentWorld=id;const w=worlds[id];setTheme(w);
+ $("#lessonIcon").textContent=w.icon;$("#lessonTitle").textContent=w.title;$("#lessonText").textContent=w.lesson;
+ $("#lessonKey").innerHTML=`<strong>💡 Clave didáctica</strong>${w.key.replace("Clave didáctica: ","")}`;
+ $("#conceptGrid").innerHTML=w.concepts.map(c=>`<div class="concept-card"><b>${c[0]}</b><span>${c[1]}</span></div>`).join("");
+ showOnly("lesson");playTone("start");
+}
+function startWorld(){currentLevel=0;score=0;lives=3;mazeUnlocked=false;showOnly("game");renderLevel();playTone("start");}
+function renderLevel(){
+ clearInterval(timer);answered=false;timeLeft=25;
+ const w=worlds[currentWorld],l=w.levels[currentLevel];
+ $("#score").textContent=score;$("#lives").textContent=lives;$("#worldShort").textContent=w.short;
+ $("#levelLabel").textContent=`${currentLevel+1}/5`;$("#progressFill").style.width=`${currentLevel/5*100}%`;
+ let mazeHTML=l.maze?createMazeHTML():"";
+ $("#gameCard").innerHTML=`
+  <div class="level-kicker">Nivel ${currentLevel+1} · ${l.goal}</div>
+  <h1>${w.icon} ${w.title}</h1>
+  <div class="mission">🎯 ${l.mission}</div>
+  <div class="text-base">${l.fragment}</div>
+  <div class="hint">💡 <span><b>Pista:</b> ${l.hint}</span></div>
+  ${mazeHTML}
+  <div class="question">${l.question}</div>
+  <div class="options">${l.options.map((o,i)=>`<button class="option" onclick="chooseAnswer(${i},this)" ${l.maze?'disabled':''}>${String.fromCharCode(65+i)}. ${o}</button>`).join("")}</div>`;
+ updateTimeUI();startTimer();
+ if(l.maze){setTimeout(initMaze,80)}
+}
+function startTimer(){
+ timer=setInterval(()=>{
+  timeLeft--;updateTimeUI();
+  if(timeLeft<=5&&timeLeft>0)playTone("alert");
+  if(timeLeft<=0){clearInterval(timer);if(!answered)timeExpired();}
+ },1000);
+}
+function updateTimeUI(){
+ $("#timeText").textContent=timeLeft+" s";
+ $("#timeFill").style.width=(timeLeft/25*100)+"%";
+ $("#timeFill").style.background=timeLeft<=5?"linear-gradient(90deg,#e7a14a,#d95d6f)":"linear-gradient(90deg,var(--accent),var(--accent2))";
+}
+function chooseAnswer(i,btn){
+ if(answered||btn.disabled)return;answered=true;clearInterval(timer);playTone("select");
+ const l=worlds[currentWorld].levels[currentLevel];
+ $$(".option").forEach((b,idx)=>{b.disabled=true;if(idx===l.correct)b.classList.add("correct")});
+ if(i===l.correct){score+=100+timeLeft*2;btn.classList.add("correct");playTone("correct");confetti();showFeedback(true,l)}
+ else{lives--;btn.classList.add("wrong");playTone("wrong");showFeedback(false,l)}
+ $("#score").textContent=score;$("#lives").textContent=lives;
+}
+function timeExpired(){
+ answered=true;lives--;$("#lives").textContent=lives;playTone("wrong");
+ showFeedback(false,worlds[currentWorld].levels[currentLevel],true);
+}
+function showFeedback(ok,l,timed=false){
+ $("#feedbackIcon").textContent=ok?"🎉":"🧠";
+ $("#feedbackTitle").textContent=ok?"¡Respuesta correcta!":timed?"¡Se agotó el tiempo!":"Vamos a intentarlo mejor";
+ $("#feedbackText").textContent=ok?l.explanation:(timed?"Perdiste una vida. Lee la explicación y vuelve a intentarlo.":l.explanation);
+ $("#rememberBox").innerHTML=`<b>📌 Para recordar:</b><br>${l.remember}`;
+ const btn=$("#feedbackBtn");
+ if(ok){btn.textContent=currentLevel===4?"Ver resultado":"Siguiente nivel →";btn.onclick=nextLevel}
+ else if(lives<=0){btn.textContent="Reiniciar mundo";btn.onclick=()=>{hideModal();startWorld()}}
+ else{btn.textContent="Reintentar nivel";btn.onclick=()=>{hideModal();renderLevel()}}
+ $("#feedbackModal").classList.remove("hidden");
+}
+function hideModal(){$("#feedbackModal").classList.add("hidden")}
+function nextLevel(){
+ hideModal();
+ if(currentLevel<4){currentLevel++;renderLevel()}else finishWorld();
+}
+function finishWorld(){
+ clearInterval(timer);$("#progressFill").style.width="100%";
+ $("#gameCard").innerHTML=`<div class="finish"><div class="trophy">🏆</div><div class="level-kicker">Mundo completado</div><h1>¡Misión literaria cumplida!</h1><p>Superaste los cinco niveles de <b>${worlds[currentWorld].title}</b>.</p><div class="didactic-key"><strong>Puntaje final</strong><span style="font-size:34px;font-weight:900">${score} puntos</span></div><div class="lesson-actions"><button class="btn btn-soft" onclick="showHome()">Elegir otro mundo</button><button class="btn btn-primary" onclick="startWorld()">Jugar de nuevo</button></div></div>`;
+ confetti();
+}
+function createMazeHTML(){
+ return `<div class="maze-panel"><div class="maze-info"><b>🧭 Laberinto de conceptos</b><span>Teclas: ↑ ↓ ← →</span></div><div id="mazeBoard" class="maze-board" tabindex="0" aria-label="Laberinto interactivo"></div><div id="mazeConcept" class="maze-concept">Explora los puntos dorados y llega a la salida verde.</div></div>`;
+}
+const mazeMap=[
+"#########",
+"#S..#...#",
+"#.#.#.#C#",
+"#C#...#.#",
+"#.###.#.#",
+"#...#.#C#",
+"###.#.#.#",
+"#C....#E#",
+"#########"
+];
+let player={r:1,c:1};
+const mazeConcepts={
+ "3,1":"📖 Narrativo: cuenta hechos mediante narrador, personajes, tiempo y espacio.",
+ "2,7":"💗 Lírico: expresa sentimientos y usa imágenes poéticas.",
+ "5,7":"🎭 Dramático: presenta diálogos y acciones para ser representadas.",
+ "7,1":"✨ Recurso literario: embellece o intensifica el lenguaje."
+};
+function initMaze(){
+ player={r:1,c:1};drawMaze();
+ const board=$("#mazeBoard");board.focus();
+ board.addEventListener("keydown",moveMaze);
+}
+function drawMaze(){
+ const board=$("#mazeBoard");if(!board)return;board.innerHTML="";
+ mazeMap.forEach((row,r)=>[...row].forEach((ch,c)=>{
+  const d=document.createElement("div");d.className="cell "+(ch==="#"?"wall":"path");
+  if(ch==="C"){d.classList.add("checkpoint");d.textContent="✦"}
+  if(ch==="E"){d.classList.add("exit");d.textContent="🚪"}
+  if(r===player.r&&c===player.c){d.classList.add("player");d.textContent="🤖"}
+  board.appendChild(d);
+ }));
+}
+function moveMaze(e){
+ const moves={ArrowUp:[-1,0],ArrowDown:[1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]};
+ if(!moves[e.key])return;e.preventDefault();
+ const [dr,dc]=moves[e.key],nr=player.r+dr,nc=player.c+dc;
+ if(mazeMap[nr][nc]==="#"){playTone("wrong");return}
+ player={r:nr,c:nc};playTone("select");drawMaze();
+ const key=`${nr},${nc}`;
+ if(mazeConcepts[key])$("#mazeConcept").textContent=mazeConcepts[key];
+ if(mazeMap[nr][nc]==="E"){
+  mazeUnlocked=true;$("#mazeConcept").innerHTML="<b>🏁 ¡Salida encontrada!</b> Ya puedes responder la pregunta.";
+  $$(".option").forEach(b=>b.disabled=false);playTone("correct");confetti();
+ }
+}
+function ensureAudio(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)()}
+function beep(freq,duration,type="sine",gain=.06,delay=0){
+ if(!soundOn)return;ensureAudio();const t=audioCtx.currentTime+delay,o=audioCtx.createOscillator(),g=audioCtx.createGain();
+ o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(gain,t);g.gain.exponentialRampToValueAtTime(.001,t+duration);
+ o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+duration);
+}
+function playTone(type){
+ if(!soundOn)return;
+ if(type==="start"){beep(440,.12);beep(660,.16,"sine",.05,.12)}
+ if(type==="select")beep(520,.08,"triangle",.04);
+ if(type==="correct"){beep(523,.12);beep(659,.12,"sine",.05,.1);beep(784,.22,"sine",.05,.2)}
+ if(type==="wrong"){beep(210,.18,"sawtooth",.035);beep(150,.22,"sawtooth",.025,.12)}
+ if(type==="alert")beep(880,.06,"square",.02);
+}
+function toggleSound(){
+ soundOn=!soundOn;$$(".sound-toggle").forEach(b=>b.textContent=soundOn?"🔊 Sonido":"🔇 Silencio");
+ if(soundOn)playTone("start");
+}
+function confetti(){
+ const colors=["#e6af55","#b8619d","#57b8b0","#7f6cc3","#ef7d8d"];
+ for(let i=0;i<70;i++){
+  const c=document.createElement("div");c.className="confetti";c.style.left=Math.random()*100+"vw";c.style.background=colors[i%colors.length];c.style.animationDelay=Math.random()*.45+"s";c.style.transform=`rotate(${Math.random()*360}deg)`;document.body.appendChild(c);setTimeout(()=>c.remove(),2400);
+ }
+}
+$$(".sound-toggle").forEach(b=>b.addEventListener("click",toggleSound));
+buildWorldCards();
+</script>
+</body>
+</html>
